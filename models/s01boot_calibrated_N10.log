@@ -1,0 +1,264 @@
+
+Ref model: models/Rajagopal2015_passiveCal_hipAbdMoved.osim
+	Coordinates: hip_flexion_r, hip_adduction_r, hip_rotation_r
+		N muscles: 18
+	Coordinates: hip_flexion_r, hip_adduction_r, hip_rotation_r, knee_angle_r
+		N muscles: 7
+	Coordinates: knee_angle_r
+		N muscles: 4
+	Coordinates: knee_angle_r, ankle_angle_r, subtalar_angle_r
+		N muscles: 2
+	Coordinates: ankle_angle_r, subtalar_angle_r
+		N muscles: 9
+
+Targ model: models/s01boot_calibrated.osim
+	Coordinates: hip_flexion_r, hip_adduction_r, hip_rotation_r
+		N muscles: 18
+	Coordinates: hip_flexion_r, hip_adduction_r, hip_rotation_r, knee_angle_r
+		N muscles: 7
+	Coordinates: knee_angle_r
+		N muscles: 4
+	Coordinates: knee_angle_r, ankle_angle_r, subtalar_angle_r
+		N muscles: 2
+	Coordinates: ankle_angle_r, subtalar_angle_r
+		N muscles: 9
+
+ addbrev_r
+	OFL   : 0.103100;	-9.8211 %
+	TSL   : 0.035450;	0.5376 %
+	eval  : 959 / 1000
+	error : 5.9544e-06
+
+ addlong_r
+	OFL   : 0.108200;	-11.1756 %
+	TSL   : 0.131799;	-1.9631 %
+	eval  : 914 / 1000
+	error : 1.2177e-05
+
+ addmagDist_r
+	OFL   : 0.177200;	-11.0972 %
+	TSL   : 0.087381;	4.3536 %
+	eval  : 1000 / 1000
+	error : 2.7354e-05
+
+ addmagIsch_r
+	OFL   : 0.156200;	-11.0986 %
+	TSL   : 0.216343;	-1.7639 %
+	eval  : 1000 / 1000
+	error : 2.7074e-05
+
+ addmagMid_r
+	OFL   : 0.137700;	-10.8608 %
+	TSL   : 0.046628;	5.6937 %
+	eval  : 1000 / 1000
+	error : 2.2246e-05
+
+ addmagProx_r
+	OFL   : 0.105600;	-8.6703 %
+	TSL   : 0.040324;	-6.7048 %
+	eval  : 916 / 1000
+	error : 1.4509e-06
+
+ bflh_r
+	OFL   : 0.097601;	-8.8196 %
+	TSL   : 0.325228;	-4.8205 %
+	eval  : 8330 / 10000
+	error : 2.9381e-02
+
+ glmax1_r
+	OFL   : 0.147000;	-4.3417 %
+	TSL   : 0.048841;	-26.0043 %
+	eval  : 1000 / 1000
+	error : 1.3664e-01
+
+ glmax2_r
+	OFL   : 0.157000;	-8.9980 %
+	TSL   : 0.067887;	-8.3066 %
+	eval  : 1000 / 1000
+	error : 9.0105e-05
+
+ glmax3_r
+	OFL   : 0.167000;	-9.6390 %
+	TSL   : 0.069717;	-4.6942 %
+	eval  : 1000 / 1000
+	error : 8.9536e-05
+
+ glmed1_r
+	OFL   : 0.076631;	-6.6377 %
+	TSL   : 0.058593;	-13.3345 %
+	eval  : 859 / 1000
+	error : 3.0258e-06
+
+ glmed2_r
+	OFL   : 0.084358;	-6.4494 %
+	TSL   : 0.075401;	-13.6644 %
+	eval  : 957 / 1000
+	error : 5.6325e-06
+
+ glmed3_r
+	OFL   : 0.078033;	-6.9136 %
+	TSL   : 0.048351;	-13.8488 %
+	eval  : 966 / 1000
+	error : 5.0834e-06
+
+ glmin1_r
+	OFL   : 0.081439;	-6.4013 %
+	TSL   : 0.019327;	-23.5304 %
+	eval  : 851 / 1000
+	error : 5.7058e-06
+
+ glmin2_r
+	OFL   : 0.068736;	-6.5289 %
+	TSL   : 0.032035;	-16.8296 %
+	eval  : 858 / 1000
+	error : 3.2524e-06
+
+ glmin3_r
+	OFL   : 0.035385;	-7.5557 %
+	TSL   : 0.047372;	-10.2297 %
+	eval  : 733 / 1000
+	error : 1.6594e-07
+
+ grac_r
+	OFL   : 0.227801;	-7.2225 %
+	TSL   : 0.172014;	-2.1732 %
+	eval  : 10000 / 10000
+	error : 3.9471e-02
+
+ iliacus_r
+	OFL   : 0.106600;	-8.9335 %
+	TSL   : 0.096121;	-9.9261 %
+	eval  : 873 / 1000
+	error : 2.5903e-03
+
+ piri_r
+	OFL   : 0.026000;	-7.3848 %
+	TSL   : 0.114906;	-10.4355 %
+	eval  : 717 / 1000
+	error : 2.9513e-07
+
+ psoas_r
+	OFL   : 0.116900;	-9.3425 %
+	TSL   : 0.099543;	-10.2338 %
+	eval  : 1000 / 1000
+	error : 9.4307e-04
+
+ recfem_r
+	OFL   : 0.075899;	-7.5856 %
+	TSL   : 0.448490;	-4.6612 %
+	eval  : 7033 / 10000
+	error : 3.3777e-02
+
+ sart_r
+	OFL   : 0.403001;	-9.2337 %
+	TSL   : 0.124000;	6.2928 %
+	eval  : 10000 / 10000
+	error : 2.8062e-02
+
+ semimem_r
+	OFL   : 0.069000;	-7.1716 %
+	TSL   : 0.347588;	-5.5642 %
+	eval  : 7117 / 10000
+	error : 3.0922e-02
+
+ semiten_r
+	OFL   : 0.193001;	-7.5684 %
+	TSL   : 0.247200;	-3.6260 %
+	eval  : 9962 / 10000
+	error : 5.7228e-02
+
+ tfl_r
+	OFL   : 0.093137;	-8.5656 %
+	TSL   : 0.440680;	-5.7688 %
+	eval  : 4838 / 10000
+	error : 3.2551e-04
+
+ bfsh_r
+	OFL   : 0.110301;	-1.9504 %
+	TSL   : 0.105818;	-8.3283 %
+	eval  : 10 / 10
+	error : 6.0030e-08
+
+ gaslat_r
+	OFL   : 0.058800;	-5.6059 %
+	TSL   : 0.376071;	-1.6307 %
+	eval  : 646 / 1000
+	error : 1.2137e-05
+
+ gasmed_r
+	OFL   : 0.051000;	-5.7457 %
+	TSL   : 0.398716;	-1.8118 %
+	eval  : 499 / 1000
+	error : 2.8390e-06
+
+ vasint_r
+	OFL   : 0.099299;	-0.8264 %
+	TSL   : 0.202208;	-6.5740 %
+	eval  : 10 / 10
+	error : 4.4748e-07
+
+ vaslat_r
+	OFL   : 0.099399;	-1.2022 %
+	TSL   : 0.220599;	-6.1957 %
+	eval  : 10 / 10
+	error : 1.6738e-07
+
+ vasmed_r
+	OFL   : 0.096799;	-1.3724 %
+	TSL   : 0.199902;	-6.0867 %
+	eval  : 10 / 10
+	error : 3.5876e-07
+
+ edl_r
+	OFL   : 0.069300;	-2.4007 %
+	TSL   : 0.368875;	-3.2811 %
+	eval  : 100 / 100
+	error : 4.3485e-07
+
+ ehl_r
+	OFL   : 0.074800;	-2.6204 %
+	TSL   : 0.326795;	-3.4790 %
+	eval  : 100 / 100
+	error : 2.7589e-07
+
+ fdl_r
+	OFL   : 0.044600;	-5.1078 %
+	TSL   : 0.378773;	-3.4223 %
+	eval  : 100 / 100
+	error : 1.5646e-08
+
+ fhl_r
+	OFL   : 0.052700;	-4.5049 %
+	TSL   : 0.354340;	-3.6380 %
+	eval  : 100 / 100
+	error : 2.0730e-08
+
+ perbrev_r
+	OFL   : 0.045400;	-3.3180 %
+	TSL   : 0.147528;	-2.3705 %
+	eval  : 100 / 100
+	error : 2.1840e-08
+
+ perlong_r
+	OFL   : 0.050800;	-2.0345 %
+	TSL   : 0.332221;	-3.0238 %
+	eval  : 100 / 100
+	error : 1.2034e-07
+
+ soleus_r
+	OFL   : 0.044000;	-5.5488 %
+	TSL   : 0.276756;	-1.6039 %
+	eval  : 90 / 100
+	error : 2.9410e-07
+
+ tibant_r
+	OFL   : 0.068300;	-2.3068 %
+	TSL   : 0.240461;	-2.5726 %
+	eval  : 100 / 100
+	error : 1.8854e-07
+
+ tibpost_r
+	OFL   : 0.037800;	-5.6832 %
+	TSL   : 0.280780;	-2.0814 %
+	eval  : 99 / 100
+	error : 3.4797e-08
