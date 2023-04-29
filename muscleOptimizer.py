@@ -1,35 +1,21 @@
-interval = 5
-oneLegOnly = True # if using identical scale factors for both legs
-nameRef = 'Rajagopal2015_passiveCal_hipAbdMoved.osim'
-nameTarg = 's01boot_calibrated.osim'
-
-
-
 import opensim as osim
 import numpy as np
 from time import time
 from itertools import product
 import matplotlib.pyplot as plt
 from scipy.optimize import nnls
-# from scipy.linalg import lstsq
-import json, os
-import logging as log
-
-log.basicConfig(level=log.INFO, filename="logfile.log", filemode="w", format="%(message)s")
+import json, os, sys
 
 
+interval = 10
+oneLegOnly = True # if using identical scale factors for both legs
+nameRef = 'models/Rajagopal2015_passiveCal_hipAbdMoved.osim'
+nameTarg = 'models/s01boot_calibrated.osim'
+
+console = sys.stdout
+sys.stdout = open(f'{nameTarg[:-5]}_N{interval}.log', 'w') # print to log file
 outputJson = nameRef[:-5]+f'_N{interval}.json'
-
 osim.Logger.setLevelString('Off')
-
-class myEncoder(json.JSONEncoder):
-	'''Support numpy
-	round numbers'''
-	def default(self, obj):
-		if isinstance(obj, np.ndarray):
-			return obj.round(6).tolist()
-		return json.JSONEncoder.default(self, obj)
-
 
 t0 = time()
 
@@ -62,7 +48,8 @@ for i in modelRef.getCoordinateSet():
 			coordinateMuscle[i.getName()].append(muscle)
 		
 		i.setValue(state, r0) # back to default 
- # e.g 'knee_angle_r': ['bflh_r', 'bfsh_r', 'gaslat_r', 'gasmed_r', 'grac_r', 'recfem_r', 'sart_r', 'semimem_r', 'semiten_r', 'tfl_r', 'vasint_r', 'vaslat_r', 'vasmed_r'
+ # e.g 'knee_angle_r': ['bflh_r', 'bfsh_r', 'gaslat_r', 'gasmed_r', 'grac_r', 'recfem_r', 'sart_r', 
+ #                      'semimem_r', 'semiten_r', 'tfl_r', 'vasint_r', 'vaslat_r', 'vasmed_r']
 
 t2 = time()
 # print(t2-t1)
@@ -113,9 +100,6 @@ def getMuscleQuantities(modelFile):
 		# e.g. ['hip_flexion_r', 'hip_adduction_r', 'hip_rotation_r']
 		print('\tCoordinates:',', '.join(coordinates))
 		print('\t\tN muscles:', len(ii))
-		log.info(f"\tCoordinates: {', '.join(coordinates)}")
-		log.info(f'\t\tN muscles: {len(ii)}')		
-		# print('\t', ', '.join(ii))
 
 		temp = [coordinateInterval[j] for j in coordinates]
 		combine = list(product(*temp)) # all combinations
@@ -146,24 +130,20 @@ def getMuscleQuantities(modelFile):
 
 if os.path.isfile(outputJson):
 	print(f'Pre-calculated muscle quantities exists:\n\tload {outputJson}')
-	log.info(f'Pre-calculated muscle quantities exists:\n\tload {outputJson}')
 	ref = json.load(open(outputJson, mode='r'))
 	printJson = False
 else:
 	print(f'\nRef model: {nameRef}')
-	log.info(f'\nRef model: {nameRef}')
 	ref = getMuscleQuantities(modelRef)
 	printJson = True
 
 print(f'\nTarg model: {nameTarg}')
-log.info(f'\nTarg model: {nameTarg}')
 Targ = getMuscleQuantities(modelTarg)
 
-# %%
+
 optimized = dict()
 for i in muscleCoordinate.keys():
 	print('\n',i)
-	log.info(f'\n{i}')
 	muscleRef = modelRef.getMuscles().get(i)
 	OFL = muscleRef.getOptimalFiberLength()
 	TSL = muscleRef.getTendonSlackLength()
@@ -192,7 +172,6 @@ for i in muscleCoordinate.keys():
 	if min(x)<=0:
 		if max(TL) - min(TL) < 1e-3:
 			print('\tWARNING: no change in tendon length;\n\tRECOMPUTE ...')
-			log.info('\tWARNING: no change in tendon length;\n\tRECOMPUTE ...')
 		fraction = TL / MTL
 		proportion = fraction * MTL2 # tendon-muscletendon length proportion
 
@@ -213,11 +192,6 @@ for i in muscleCoordinate.keys():
 	print(f'\teval  : {sum(ok)} / {row}')
 	print(f'\terror : {(error):.4e}')
 
-	log.info(f'\tOFL   : {OFL:.6f};\t{(100*(OFL-x[0])/OFL):.4f} %')
-	log.info(f'\tTSL   : {TSL:.6f};\t{(100*(TSL-x[1])/TSL):.4f} %')
-	log.info(f'\teval  : {sum(ok)} / {row}')
-	log.info(f'\terror : {(error):.4e}')
-
 	optimized[i] = x.tolist()
 
 for i,ii in optimized.items():
@@ -234,9 +208,18 @@ if oneLegOnly:
 		ref[other] = ref[i]
 
 if printJson:
+	class myEncoder(json.JSONEncoder):
+		'''Support numpy
+		round numbers'''
+		def default(self, obj):
+			if isinstance(obj, np.ndarray):
+				return obj.round(6).tolist()
+			return json.JSONEncoder.default(self, obj)
+
 	json.dump(ref, open(outputJson,'w'), cls=myEncoder, separators=(',', ':'))
 
-modelTarg.printToXML('python_optimized.osim') # nameTarg[:-5]+
+f.close()
+modelTarg.printToXML(f'{nameTarg[:-5]}_N{interval}_pyOpt.osim') # nameTarg[:-5]+
 t3 = time()
 
-# print(t3-t2)
+print(f'\n{t3-t0}')
