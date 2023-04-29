@@ -14,7 +14,7 @@ nameTarg = 'models/s01boot_calibrated.osim'
 
 console = sys.stdout
 sys.stdout = open(f'{nameTarg[:-5]}_N{interval}.log', 'w') # print to log file
-outputJson = nameRef[:-5]+f'_N{interval}.json'
+refJson = nameRef[:-5]+f'_N{interval}.json'
 osim.Logger.setLevelString('Off')
 
 t0 = time()
@@ -128,9 +128,9 @@ def getMuscleQuantities(modelFile):
 	return muscleQuantities
 
 
-if os.path.isfile(outputJson):
-	print(f'Pre-calculated muscle quantities exists:\n\tload {outputJson}')
-	ref = json.load(open(outputJson, mode='r'))
+if os.path.isfile(refJson):
+	print(f'Pre-calculated muscle quantities exists:\n\tload {refJson}')
+	ref = json.load(open(refJson, mode='r'))
 	printJson = False
 else:
 	print(f'\nRef model: {nameRef}')
@@ -216,7 +216,7 @@ if printJson:
 				return obj.round(6).tolist()
 			return json.JSONEncoder.default(self, obj)
 
-	json.dump(ref, open(outputJson,'w'), cls=myEncoder, separators=(',', ':'))
+	json.dump(ref, open(refJson,'w'), cls=myEncoder, separators=(',', ':'))
 
 f.close()
 modelTarg.printToXML(f'{nameTarg[:-5]}_N{interval}_pyOpt.osim') # nameTarg[:-5]+
