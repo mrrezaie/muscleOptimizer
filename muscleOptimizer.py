@@ -7,20 +7,26 @@ from scipy.optimize import nnls
 import json, os, sys
 
 
-interval = 10
-oneLegOnly = True # if using identical scale factors for both legs
-nameRef = 'models/Rajagopal2015_passiveCal_hipAbdMoved.osim'
-nameTarg = 'models/s01boot_calibrated.osim'
+interval  = 2
+oneLeg    = True # if using identical scale factors for both legs
+nameRef   = 'models/Rajagopal2015_passiveCal_hipAbdMoved.osim'
+nameSub   = 'models/s01boot_calibrated.osim'
+
+heightSub = 1.795 # height of the subject (m)
+massSub   = 61.7 # mass of the subject (kg)
+
+heightRef = 1.68 # (m) Rajagopal et al. (2016)
+massRef   = 75.337 # (kg) Rajagopal et al. (2016)
 
 console = sys.stdout
-sys.stdout = open(f'{nameTarg[:-5]}_N{interval}.log', 'w') # print to log file
+sys.stdout = open(f'{nameSub[:-5]}_N{interval}.log', 'w') # print to log file
 refJson = nameRef[:-5]+f'_N{interval}.json'
 osim.Logger.setLevelString('Off')
 
 t0 = time()
 
 modelRef = osim.Model(nameRef)
-modelTarg = osim.Model(nameTarg)
+modelSub = osim.Model(nameSub)
 state = modelRef.initSystem()
 nameMuscles = [i.getName() for i in modelRef.getMuscles()]
 
@@ -63,7 +69,7 @@ for coordinate,ii in coordinateMuscle.items():
 			muscleCoordinate[muscle].append(coordinate)
 # e.g. 'gaslat_l': ['knee_angle_l', 'ankle_angle_l', 'subtalar_angle_l']
 
-if oneLegOnly:
+if oneLeg:
 	for i in nameMuscles:
 		if i.endswith('_l'):
 			muscleCoordinate.pop(i, None)
@@ -133,18 +139,20 @@ if os.path.isfile(refJson):
 	ref = json.load(open(refJson, mode='r'))
 	printJson = False
 else:
-	print(f'\nRef model: {nameRef}')
+	print(f'Reference model: {nameRef}')
 	ref = getMuscleQuantities(modelRef)
 	printJson = True
 
-print(f'\nTarg model: {nameTarg}')
-Targ = getMuscleQuantities(modelTarg)
+print(f'\nScaled model: {nameSub}')
+sub = getMuscleQuantities(modelSub)
+
 
 
 optimized = dict()
 for i in muscleCoordinate.keys():
 	print('\n',i)
 	muscleRef = modelRef.getMuscles().get(i)
+	MIF = muscleRef.getMaxIsometricForce()
 	OFL = muscleRef.getOptimalFiberLength()
 	TSL = muscleRef.getTendonSlackLength()
 	PAO = muscleRef.getPennationAngleAtOptimalFiberLength()
@@ -163,12 +171,12 @@ for i in muscleCoordinate.keys():
 	PA  = ref[i][:,3][ok]   # pennation angle
 	NFLT= NFL * np.cos(PA)  # normalized fiber length along tendon
 
-	MTL2 = Targ[i][:,0][ok] # muscle-tendon length of scaled model
+	MTL2 = sub[i][:,0][ok] # muscle-tendon length of scaled model
 
 	# Compute least-squares solution to equation Ax = b
 	A = np.vstack((NFLT,NTL)).T
 	b = MTL2#.reshape((-1,1))
-	x = nnls(A,b)[0]
+	x = nnls(A,b)[0].tolist()
 	if min(x)<=0:
 		if max(TL) - min(TL) < 1e-3:
 			print('\tWARNING: no change in tendon length;\n\tRECOMPUTE ...')
@@ -183,28 +191,40 @@ for i in muscleCoordinate.keys():
 		b2 = MTL2 - NFLT*x1             # actual tendon length
 		x2 = nnls(A2,b2)[0][1]          # tendon slack length
 
-		x = np.array([x1,x2])
+		x = [x1,x2]
 
 	error = np.sum((A.dot(x)-b)**2) # sum of squared error
 
+	# PCSA = max isometric force / 60 = muscle volume / optimal fiber length
+	# Lower limb muscle volume scales with height*mass by Handsfiels et al. (2014);  Fig. 5A, R2=0.92
+	# [TODO] OR MAYBE JUST LOWER LIMB HEIGHT AND MASS (from osim model): 
+	# 	lower limb length (including pelvis) = 0.530 * body height # Winter 2009
+	# 	lower limb mass   (including pelvis) = 0.464 * total mass  # Winter 2009
+	volumeScale = (47.0*massRef*heightRef + 1285.0) / (47.0*massSub*heightSub + 1285.0)
+	lengthScale = x[0] / OFL
+	x.append((volumeScale / lengthScale) * MIF)
+
 	print(f'\tOFL   : {OFL:.6f};\t{(100*(OFL-x[0])/OFL):.4f} %')
 	print(f'\tTSL   : {TSL:.6f};\t{(100*(TSL-x[1])/TSL):.4f} %')
-	print(f'\teval  : {sum(ok)} / {row}')
-	print(f'\terror : {(error):.4e}')
+	print(f'\tMIF   : {x[2]:.3f};\t{(100*(MIF-x[2])/MIF):.4f} %')
+	# print(f'\teval  : {sum(ok)} / {row}')
+	# print(f'\terror : {error:.4e}')
 
-	optimized[i] = x.tolist()
+	optimized[i] = x
 
 for i,ii in optimized.items():
-	muscleTarg = modelTarg.getMuscles().get(i)
-	muscleTarg.setOptimalFiberLength(ii[0])
-	muscleTarg.setTendonSlackLength( ii[1])
+	muscleSub = modelSub.getMuscles().get(i)
+	muscleSub.setOptimalFiberLength(ii[0])
+	muscleSub.setTendonSlackLength( ii[1])
+	muscleSub.setMaxIsometricForce( ii[2])
 
-if oneLegOnly:
+if oneLeg:
 	for i,ii in optimized.items():
 		other = i[:-2]+'_l'
-		muscleTarg = modelTarg.getMuscles().get(other)
-		muscleTarg.setOptimalFiberLength(ii[0])
-		muscleTarg.setTendonSlackLength( ii[1])
+		muscleSub = modelSub.getMuscles().get(other)
+		muscleSub.setOptimalFiberLength(ii[0])
+		muscleSub.setTendonSlackLength( ii[1])
+		muscleSub.setMaxIsometricForce( ii[2])
 		ref[other] = ref[i]
 
 if printJson:
@@ -218,8 +238,8 @@ if printJson:
 
 	json.dump(ref, open(refJson,'w'), cls=myEncoder, separators=(',', ':'))
 
-f.close()
-modelTarg.printToXML(f'{nameTarg[:-5]}_N{interval}_pyOpt.osim') # nameTarg[:-5]+
+modelSub.printToXML(f'{nameSub[:-5]}_N{interval}_pyOpt.osim') # nameSub[:-5]+
 t3 = time()
 
-print(f'\n{t3-t0}')
+print(f'\n{t3-t0:.2f} (s)')
+sys.stdout = console

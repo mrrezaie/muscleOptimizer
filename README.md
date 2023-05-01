@@ -1,9 +1,9 @@
 # muscleOptimizer
 WIP
 
-Optimize muscle's Optimal Fiber Length and Tendon Slack Length as proposed by [Modenese et al. 2016](https://doi.org/10.1016/j.jbiomech.2015.11.006).
+Optimize muscle's Optimal Fiber Length and Tendon Slack Length as proposed by [Modenese et al. (2016)](https://doi.org/10.1016/j.jbiomech.2015.11.006).
 
-Compared to the [original script](https://github.com/modenaxe/MuscleParamOptimizer), the last three changes lead to significant improvements in computational efficiency:
+Compared to the [original script](https://github.com/modenaxe/MuscleParamOptimizer), some of these changes lead to significant improvements in computational efficiency:
 
 * The method of identifying joints spanned by muscles is improved; i.e., 3 values within each coordinate's range of motion (min, intermediate, and max) are tested to see if there are any changes in muscles' length with a threshold of 0.1 mm. This works for all models and muscles, e.g., trunk muscles.
 
@@ -29,3 +29,4 @@ Compared to the [original script](https://github.com/modenaxe/MuscleParamOptimiz
 'ankle_angle_r; subtalar_angle_r': 
 ['edl_r', 'ehl_r', 'fdl_r', 'fhl_r', 'perbrev_r', 'perlong_r', 'soleus_r', 'tibant_r', 'tibpost_r']
 ```
+* Scale maximum isometric force based on lower limb muscles volume regression equation by [Handsfield et al. (2014)](https://doi.org/10.1016/j.jbiomech.2013.12.002)
