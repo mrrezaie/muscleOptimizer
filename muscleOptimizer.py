@@ -82,8 +82,8 @@ for i,ii in muscleCoordinate.items():
 	sharedCoordinates[ii].append(i)
 # e.g. 'knee_angle_l;ankle_angle_l;subtalar_angle_l': ['gaslat_l', 'gasmed_l']
 
-len(muscleCoordinate.keys())
-len(sharedCoordinates.keys())
+# len(muscleCoordinate.keys())
+# len(sharedCoordinates.keys())
 
 coordinateInterval = dict()
 for i,ii in coordinateMuscle.items():
@@ -111,8 +111,9 @@ def getMuscleQuantities(modelFile):
 		combine = list(product(*temp)) # all combinations
 		for jj,j in enumerate(combine):
 			for kk,k in enumerate(coordinates):
-				model.updCoordinateSet().get(k).setValue(state, j[kk])
+				model.getCoordinateSet().get(k).setValue(state, j[kk], enforceContraints=False)
 
+			model.assemble(state)
 			model.realizePosition(state)
 			# model.equilibrateMuscles(state)
 
@@ -128,8 +129,8 @@ def getMuscleQuantities(modelFile):
 				muscleQuantities[nameMuscle][jj,:] = quantities
 
 		for k in coordinates: # back to defaults
-			default = model.updCoordinateSet().get(k).getDefaultValue()
-			model.updCoordinateSet().get(k).setValue(state, default)
+			default = model.getCoordinateSet().get(k).getDefaultValue()
+			model.getCoordinateSet().get(k).setValue(state, default)
 		# model.realizePosition(state)
 	return muscleQuantities
 
